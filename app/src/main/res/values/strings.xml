@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Paint Helper</string>
+    <string-array name="convert_from">
+        <item>Sample</item>
+        <item>Quart</item>
+        <item>Gallon</item>
+        <item>5-Gallon</item>
+    </string-array>
+</resources>
