@@ -405,7 +405,7 @@ public class MainActivity extends AppCompatActivity{
 
 
             //Added 8/2/17
-            drops = roundHalfDown(drops);
+            //drops = roundHalfDown(drops);  //Rounding function needs testing
 
             //set values
             oz_box.setText(Double.toString(ounces));
@@ -414,10 +414,12 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
+    /* Potential Rounding Function - needs testing
     //Added 8/2/17
     public static double roundHalfDown(double d) {
         return new BigDecimal(d).setScale(0, RoundingMode.HALF_UP)
                 .doubleValue();
 
     }
+    */
 }
