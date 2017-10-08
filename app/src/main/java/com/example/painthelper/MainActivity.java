@@ -28,9 +28,9 @@ import java.math.RoundingMode;
 
 public class MainActivity extends AppCompatActivity{
 
-    //constants
     private static final int NUM_FIELDS = 6;   //tells program how many formula fields there are
     int CONVERT_FROM_SETTING=0;   //needed to tell program what to convert from
+    int CONVERT_TO_SETTING=0;   //needed to tell the program what to convert to
 
 
     //OnCreate - executed when the app starts
@@ -40,37 +40,39 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
 
 
+
+
         //*****************************Declarations*********************************
 
         //declare buttons and retrieve corresponding Views
-        Button button_sample = (Button) findViewById(R.id.button_sample);   //convert to sample
-        Button button_quart = (Button) findViewById(R.id.button_quart);     //convert to quart
-        Button button_gallon = (Button) findViewById(R.id.button_gallon);   //convert to gallon
-        Button button_5gallon = (Button) findViewById(R.id.button_5gal);    //convert to 5-gallon
+        Button button_convert = (Button) findViewById(R.id.button_convert);   //button to initiate conversion
 
+        //set up arrays of editText views
         final int[] ozIds = {R.id.editText_oz1, R.id.editText_oz2, R.id.editText_oz3, R.id.editText_oz4, R.id.editText_oz5, R.id.editText_oz6};
         final int[] dropIds = {R.id.editText_drop1, R.id.editText_drop2, R.id.editText_drop3, R.id.editText_drop4, R.id.editText_drop5, R.id.editText_drop6};
 
-        //*****************************End Declarations*****************************
 
 
 
-        //******************Set Up Spinner (Drop-down Menu)***********************
-        Spinner dropDown = (Spinner) findViewById(R.id.spinner);
+        //******************Set Up Spinners (Drop-down Menus)***********************
+        //**************************************************************************
+
+        //Spinner_from will be initialized first
+        Spinner dropDown_from = (Spinner) findViewById(R.id.spinner_from);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+        ArrayAdapter<CharSequence> adapter_from = ArrayAdapter.createFromResource(this,
                 R.array.convert_from, android.R.layout.simple_spinner_item);
 
         // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        adapter_from.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         // Apply the adapter to the spinner
-        dropDown.setAdapter(adapter);
+        dropDown_from.setAdapter(adapter_from);
 
         //handle selection by user - CONVERT_FROM_SETTING will tell the conversion method
         //below how to perform its calculations.
-        dropDown.setOnItemSelectedListener( new AdapterView.OnItemSelectedListener() {
+        dropDown_from.setOnItemSelectedListener( new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
@@ -95,92 +97,90 @@ public class MainActivity extends AppCompatActivity{
                 //Do Nothing
             }
         });
-        //***************************************************************************
 
-        //Convert to sample
+
+        //Spinner_to will now be initialized
+        Spinner dropDown_to = (Spinner) findViewById(R.id.spinner_to);
+
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter_to = ArrayAdapter.createFromResource(this,
+                R.array.convert_from, android.R.layout.simple_spinner_item);
+
+        // Specify the layout to use when the list of choices appears
+        adapter_to.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Apply the adapter to the spinner
+        dropDown_to.setAdapter(adapter_to);
+
+        //handle selection by user - CONVERT_TO_SETTING will ensure that correct conversion is performed
+        dropDown_to.setOnItemSelectedListener( new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+                switch(position) {
+                    case 0:
+                        CONVERT_TO_SETTING = 8;   //sample selected (8oz)
+                        break;
+                    case 1:
+                        CONVERT_TO_SETTING = 32;  //quart selected (32oz)
+                        break;
+                    case 2:
+                        CONVERT_TO_SETTING = 128; //gallon selected (128oz)
+                        break;
+                    case 3:
+                        CONVERT_TO_SETTING = 640; //5-gallon selected (640oz)
+                        break;
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                //Do Nothing
+            }
+        });
+
+
+        //Convert formula when button_convert is pressed
         //setup listener
-        button_sample.setOnClickListener(
+        button_convert.setOnClickListener(
                 new View.OnClickListener()
                 {
-
                     public void onClick(View v)
                     {
-                        //Now that the sample button has been pressed we must convert the formula
-                        //We proceed by cycling through the EditText views using the arrays of IDs that we set up above
-                        //NOTE - both arrays have a fixed number of elements and both lengths will always be the same so
-                        //  a constant is used for their length.
-                        for (int i = 0; i < NUM_FIELDS; i++)
+                        //Now that the convert button has been pressed we must convert the formula
+                        //The switch statement will ensure the proper conversion is performed.
+                        switch(CONVERT_TO_SETTING)
                         {
-                            convertToSample((EditText)findViewById(ozIds[i]), (EditText) findViewById(dropIds[i]));
-                        }
+                            case 8:
+                                for (int i = 0; i < NUM_FIELDS; i++)
+                                {
+                                    convertToSample((EditText)findViewById(ozIds[i]), (EditText) findViewById(dropIds[i]));
+                                }
+                                break;
+                            case 32:
+                                for (int i = 0; i < NUM_FIELDS; i++)
+                                {
+                                    convertToQuart((EditText)findViewById(ozIds[i]), (EditText) findViewById(dropIds[i]));
+                                }
+                                break;
+                            case 128:
+                                for (int i = 0; i < NUM_FIELDS; i++)
+                                {
+                                    convertToGallon((EditText)findViewById(ozIds[i]), (EditText) findViewById(dropIds[i]));
+                                }
+                                break;
+                            case 640:
+                                for (int i = 0; i < NUM_FIELDS; i++)
+                                {
+                                    convertTo5Gallon((EditText)findViewById(ozIds[i]), (EditText) findViewById(dropIds[i]));
+                                }
+                                break;
+                            default:
+                                break;
 
+                        }
                     }
                 }
         );
-
-        //Convert to Quart
-        //setup listener
-        button_quart.setOnClickListener(
-                new View.OnClickListener()
-                {
-
-                    public void onClick(View v)
-                    {
-                        //Now that the sample button has been pressed we must convert the formula
-                        //We proceed by cycling through the EditText views using the arrays of IDs that we set up above
-                        //NOTE - both arrays have a fixed number of elements and both lengths will always be the same so
-                        //  a constant is used for their length.
-                        for (int i = 0; i < NUM_FIELDS; i++)
-                        {
-                            convertToQuart((EditText)findViewById(ozIds[i]), (EditText) findViewById(dropIds[i]));
-                        }
-
-                    }
-                }
-        );
-
-        //Convert to Gallon
-        //setup listener
-        button_gallon.setOnClickListener(
-                new View.OnClickListener()
-                {
-
-                    public void onClick(View v)
-                    {
-                        //Now that the sample button has been pressed we must convert the formula
-                        //We proceed by cycling through the EditText views using the arrays of IDs that we set up above
-                        //NOTE - both arrays have a fixed number of elements and both lengths will always be the same so
-                        //  a constant is used for their length.
-                        for (int i = 0; i < NUM_FIELDS; i++)
-                        {
-                            convertToGallon((EditText)findViewById(ozIds[i]), (EditText) findViewById(dropIds[i]));
-                        }
-
-                    }
-                }
-        );
-
-        //Convert to 5-Gallon
-        //setup listener
-        button_5gallon.setOnClickListener(
-                new View.OnClickListener()
-                {
-
-                    public void onClick(View v)
-                    {
-                        //Now that the sample button has been pressed we must convert the formula
-                        //We proceed by cycling through the EditText views using the arrays of IDs that we set up above
-                        //NOTE - both arrays have a fixed number of elements and both lengths will always be the same so
-                        //  a constant is used for their length.
-                        for (int i = 0; i < NUM_FIELDS; i++)
-                        {
-                            convertTo5Gallon((EditText)findViewById(ozIds[i]), (EditText) findViewById(dropIds[i]));
-                        }
-
-                    }
-                }
-        );
-
     }
 
     //                                                          End of OnCreate
@@ -330,7 +330,7 @@ public class MainActivity extends AppCompatActivity{
                     break;
                 case 32:
                     convRate = 4;   //Quart
-                    return;
+                    break;
                 case 128:  //Already a gallon
                     return;
                 case 640:   //5-Gallon

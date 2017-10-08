@@ -6,4 +6,10 @@
         <item>Gallon</item>
         <item>5-Gallon</item>
     </string-array>
+    <string-array name ="convert_to">
+        <item>Sample</item>
+        <item>Quart</item>
+        <item>Gallon</item>
+        <item>5-Gallon</item>
+    </string-array>
 </resources>
